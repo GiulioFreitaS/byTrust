@@ -108,7 +108,7 @@ O Feed é alimentado automaticamente por um serviço que busca notícias sobre f
 
 Tem interesse no projeto ou quer saber mais? Me chame no LinkedIn:
 
-**👉 [Giulio Pimentel de Freitas](https://www.linkedin.com/in/giulio-freitas-7ab1ab370)**
+**👉 [Giulio Pimentel de Freitas](https://www.linkedin.com/in/giulio-pimentel-7ab1ab370)**
 
 ---
 
