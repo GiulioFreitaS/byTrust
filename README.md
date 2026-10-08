@@ -108,10 +108,12 @@ O Feed é alimentado automaticamente por um serviço que busca notícias sobre f
 
 Tem interesse no projeto ou quer saber mais? Me chame no LinkedIn:
 
-**👉 [Guilherme Izidio Nogueira](https://www.linkedin.com/in/guilherme-izidio-nogueira-7ab1ab370)**
+**👉 [Giulio Pimentel de Freitas](https://www.linkedin.com/in/giulio-freitas-7ab1ab370)**
 
 ---
 
 ## Licença
 
 Todos os direitos reservados © byTrust 2026.
+
+> Projeto desenvolvido em equipe. Cópia do repositório original: [Guilhermezi/byTrust](https://github.com/Guilhermezi/byTrust).
