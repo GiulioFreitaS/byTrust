@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String                @id @default(uuid())
+  email         String                @unique
+  username      String                @unique
+  passwordHash  String
+  displayName   String?
+  bio           String?
+  avatarUrl     String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  posts         CommunityPost[]
+  verifications ProductVerification[]
+  seals         Seal[]
+  userBadges    UserBadge[]
+
+  @@map("users")
+}
+
+model Brand {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  logoUrl     String?
+  websiteUrl  String?
+  apiEndpoint String?
+  apiKey      String?
+  isActive    Boolean   @default(true)
+  products    Product[]
+
+  @@map("brands")
+}
+
+model Product {
+  id            String                @id @default(uuid())
+  brandId       String
+  name          String
+  description   String?
+  imageUrl      String?
+  category      String?
+  verifications ProductVerification[]
+  brand         Brand                 @relation(fields: [brandId], references: [id])
+
+  @@map("products")
+}
+
+model ProductVerification {
+  id          String             @id @default(uuid())
+  userId      String
+  productId   String
+  serialCode  String?
+  qrCode      String?
+  authCode    String?
+  status      VerificationStatus @default(PENDING)
+  sourceType  String             @default("manual")
+  rawResponse Json?
+  createdAt   DateTime           @default(now())
+  product     Product            @relation(fields: [productId], references: [id])
+  user        User               @relation(fields: [userId], references: [id])
+  seal        Seal?
+
+  @@unique([userId, serialCode])
+  @@map("product_verifications")
+}
+
+model Seal {
+  id             String              @id @default(uuid())
+  userId         String
+  verificationId String              @unique
+  uniqueCode     String              @unique
+  imageUrl       String
+  shareableUrl   String
+  issuedAt       DateTime            @default(now())
+  user           User                @relation(fields: [userId], references: [id])
+  verification   ProductVerification @relation(fields: [verificationId], references: [id])
+
+  @@map("seals")
+}
+
+model Badge {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String
+  imageUrl    String
+  trigger     BadgeTrigger
+  threshold   Int          @default(1)
+  userBadges  UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id       String   @id @default(uuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+  badge    Badge    @relation(fields: [badgeId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+model EducationalContent {
+  id          String      @id @default(uuid())
+  title       String
+  slug        String      @unique
+  body        String
+  contentType ContentType
+  imageUrl    String?
+  readTimeMin Int?
+  publishedAt DateTime?
+  isPublished Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+
+  @@map("educational_contents")
+}
+
+model CommunityPost {
+  id        String   @id @default(uuid())
+  userId    String
+  content   String
+  imageUrl  String?
+  sealCode  String?
+  isAuto    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("community_posts")
+}
+
+// ── Deduplicação de notícias ──────────────────────────────────────────────────
+// Guarda o fingerprint (SHA-256 truncado) de cada notícia já publicada.
+// Persiste entre deploys e reinicializações.
+
+model NewsFingerprint {
+  id          String   @id @default(uuid())
+  fingerprint String   @unique @db.Char(64)
+  sourceUrl   String   @default("") @db.VarChar(2048)
+  title       String   @default("") @db.VarChar(255)
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("news_fingerprints")
+}
+
+enum VerificationStatus {
+  AUTHENTIC
+  SUSPICIOUS
+  FAKE
+  PENDING
+}
+
+enum BadgeTrigger {
+  FIRST_VERIFICATION
+  VERIFICATIONS_COUNT
+  STREAK_DAYS
+  COMMUNITY_POST
+  EDUCATION_COMPLETE
+  ALL_BADGES
+}
+
+enum ContentType {
+  ARTICLE
+  VIDEO
+  QUIZ
+  INFOGRAPHIC
+}

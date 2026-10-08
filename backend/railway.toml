@@ -1,0 +1,32 @@
+# backend/railway.toml
+#
+# Coloque na raiz do serviço de backend no Railway (pasta backend/).
+# O Railway lê este arquivo para configurar build, start e pre-deploy.
+#
+# POR QUE railway.toml em vez de usar o start script do package.json?
+#
+# O script atual faz:
+#   "start": "npx prisma migrate deploy && node dist/index.js"
+#
+# Isso funciona, mas tem dois problemas no Railway:
+#   1. Railway não sabe que o "deploy" ainda não terminou enquanto a migration roda.
+#      Se a migration falhar, o Railway já marcou o deploy como ativo.
+#   2. No Railway, preDeployCommand roda ANTES do novo container subir e receber tráfego —
+#      isso é mais seguro para produção.
+#
+# Com railway.toml, o fluxo é:
+#   build → preDeployCommand (migrate deploy) → start (node)
+#   Se preDeployCommand falhar: deploy é cancelado. Banco protegido.
+#
+# AÇÃO NECESSÁRIA:
+#   1. Remova "npx prisma migrate deploy &&" do start script no package.json.
+#      Deixe só: "start": "node dist/index.js"
+#   2. Adicione este railway.toml na pasta backend/.
+
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm install && npm run build && npx prisma generate"
+
+[deploy]
+startCommand = "node dist/index.js"
+preDeployCommand = "npx prisma migrate deploy"

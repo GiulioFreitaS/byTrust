@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": ["src"],
+  "exclude": [
+    "src/components/ui",
+    "src/components/site.tsx",
+    "src/pages/__root.tsx",
+    "src/pages/cartilhas.tsx",
+    "src/pages/contato.tsx",
+    "src/pages/esqueci-senha.tsx",
+    "src/pages/index.tsx",
+    "src/pages/learning.tsx",
+    "src/pages/login.tsx",
+    "src/pages/privacidade.tsx",
+    "src/pages/redefinir-senha.tsx",
+    "src/pages/termos.tsx"
+  ]
+}
